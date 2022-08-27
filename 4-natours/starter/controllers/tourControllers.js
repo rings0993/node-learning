@@ -5,10 +5,33 @@ const tours = JSON.parse(
   fs.readFileSync(`${__dirname}/../dev-data/data/tours-simple.json`)
 );
 
+exports.checkID = (req, res, next, val) => {
+  console.log(val);
+  const tour = tours[req.params.id];
+
+  if (!tour) {
+    return res.status(404).json({
+      status: 'fail',
+      message: 'Invalid ID',
+    });
+  }
+  next();
+};
+
+exports.checkBody = (req, res, next) => {
+  console.log(req.body);
+  if (!req.body.name || !req.body.price) {
+    return res.status(400).json({
+      status: 'fail',
+      message: 'Missing name or price',
+    });
+  }
+  next();
+};
+
 exports.getAllTours = (req, res) => {
-  console.log(req.requestTime);
   res.status(200).json({
-    statis: 'successs',
+    status: 'successs',
     requestTime: req.requestTime,
     data: {
       tours: tours,
@@ -20,14 +43,8 @@ exports.getTour = (req, res) => {
   // console.log(req.params);
   // console.log(tours[req.params.id]);
   const tour = tours[req.params.id];
-  if (!tour) {
-    res.status(404).json({
-      statis: 'fail',
-      message: 'Invalid ID',
-    });
-  }
   res.status(200).json({
-    statis: 'successs',
+    status: 'successs',
     data: {
       tour,
     },
@@ -37,15 +54,9 @@ exports.getTour = (req, res) => {
 exports.updateTour = (req, res) => {
   // console.log(req.params);
   // console.log(tours[req.params.id]);
-  const tour = tours[req.params.id];
-  if (!tour) {
-    res.status(404).json({
-      statis: 'fail',
-      message: 'Invalid ID',
-    });
-  }
+
   res.status(200).json({
-    statis: 'successs',
+    status: 'successs',
     data: {
       tour: '<Updated Tour>',
     },
@@ -55,15 +66,9 @@ exports.updateTour = (req, res) => {
 exports.deleteTour = (req, res) => {
   // console.log(req.params);
   // console.log(tours[req.params.id]);
-  const tour = tours[req.params.id];
-  if (!tour) {
-    res.status(404).json({
-      statis: 'fail',
-      message: 'Invalid ID',
-    });
-  }
+
   res.status(204).json({
-    statis: 'successs',
+    status: 'successs',
     data: {
       tour: 'None',
     },
@@ -71,6 +76,7 @@ exports.deleteTour = (req, res) => {
 };
 
 exports.createTour = (req, res) => {
+  // console.log(req.body);
   const newId = tours[tours.length - 1].id + 1;
   const newTour = Object.assign({ id: newId }, req.body);
   tours.push(newTour);
@@ -79,7 +85,7 @@ exports.createTour = (req, res) => {
     JSON.stringify(tours),
     (err) => {
       res.status(201).json({
-        statis: 'successs',
+        status: 'successs',
         data: {
           tours: newTour,
         },

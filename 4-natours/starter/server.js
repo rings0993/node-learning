@@ -1,9 +1,7 @@
-const mongoose = require('mongoose');
 const dotenv = require('dotenv');
+const mongoose = require('mongoose');
 
 dotenv.config({ path: './config.env' });
-const app = require('./app');
-
 const DB = process.env.DATABASE.replace(
   '<DATABASE_PASSWORD>',
   process.env.DATABASE_PASSWORD
@@ -19,37 +17,10 @@ mongoose
     console.log(con.connection);
     console.log('DB connection successful');
   });
+const app = require('./app');
+
 // console.log(app.get('env'));
 // console.log(process.env);
-
-const tourSchema = new mongoose.Schema({
-  name: {
-    type: String,
-    require: [true, 'A tour must have a name'],
-  },
-  rating: Number,
-  price: {
-    type: Number,
-    require: [true, 'A tour must have a price'],
-  },
-});
-
-const Tour = mongoose.model('Tour', tourSchema);
-
-const testTour = new Tour({
-  name: 'The Forest Hiker',
-
-  price: 498,
-});
-
-testTour
-  .save()
-  .then((doc) => {
-    console.log(doc);
-  })
-  .catch((err) => {
-    console.log('❌ERROR: ', err);
-  });
 
 const port = process.env.PORT || 3000;
 app.listen(port, () => {

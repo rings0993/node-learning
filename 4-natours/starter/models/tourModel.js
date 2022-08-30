@@ -36,7 +36,7 @@ const tourSchema = new mongoose.Schema({
   },
   image: [String],
   createdAt: { type: Date, default: Date.now() },
-  startDates: [String],
+  startDates: [Date],
 });
 
 const Tour = mongoose.model('Tour', tourSchema);

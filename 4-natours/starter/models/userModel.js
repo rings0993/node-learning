@@ -1,7 +1,7 @@
 const mongoose = require('mongoose');
 const slugify = require('slugify');
 const validator = require('validator');
-
+const crypto = require('crypto');
 const bcrypt = require('bcryptjs');
 
 // name, email, photo, password, passwordConfirm
@@ -62,6 +62,8 @@ const userSchema = new mongoose.Schema({
     },
   },
   passwordChangedAt: Date,
+  passwordResetToken: String,
+  passwordResetExpires: Date,
 });
 
 userSchema.pre('save', async function (next) {
@@ -73,6 +75,19 @@ userSchema.pre('save', async function (next) {
 
   next();
 });
+
+userSchema.methods.createPasswordResetToken = function () {
+  const resetToken = crypto.randomBytes(32).toString('hex');
+
+  this.passwordResetToken = crypto
+    .createHash('sha256')
+    .update(resetToken)
+    .digest('hex');
+
+  this.passwordResetExpires = Date.now() + 1000 * 10 * 60;
+
+  return resetToken;
+};
 
 userSchema.methods.correctPassword = async function (
   candidatePassword,

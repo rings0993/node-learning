@@ -33,6 +33,12 @@ const userSchema = new mongoose.Schema({
     //   required: [true, 'A tour must have a photo'],
   },
 
+  role: {
+    type: String,
+    enum: ['admin', 'guide', 'lead-guide', 'user'],
+    default: 'user',
+  },
+
   password: {
     type: String,
     trim: true,

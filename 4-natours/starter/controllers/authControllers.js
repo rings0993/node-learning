@@ -169,29 +169,16 @@ exports.resetPassword = async (req, res, next) => {
 };
 
 exports.updateMyPassword = catchAsync(async (req, res, next) => {
-  let token = '';
-  if (
-    req.headers.authorization &&
-    req.headers.authorization.startsWith('Bearer')
-  ) {
-    token = req.headers.authorization.split(' ')[1];
-  }
+  const user = await User.findById(req.user.id).select('+password');
 
-  if (!token) {
-    return next(new AppError('You are not logged in!', 401));
-  }
-
-  const decoded = await promisify(jwt.verify)(token, process.env.JWT_SECRET);
-
-  const user = await User.findbyID(decoded.id).select('+password');
-  const password = req.body.password;
-  if (!user || !(await user.correctPassword(password, user.password))) {
+  const passwordCurrent = req.body.passwordCurrent;
+  if (!user || !(await user.correctPassword(passwordCurrent, user.password))) {
     next(new AppError('Invalid password', 401));
   }
 
-  user.password = req.body.password;
-  user.passwordConfirm = req.body.passwordConfirm;
-
+  user.password = req.body.passwordNew;
+  user.passwordConfirm = req.body.passwordNewConfirm;
   await user.save();
+
   createSendToken(user, 200, res);
 });

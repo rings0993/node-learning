@@ -11,8 +11,21 @@ const {
 } = require('../controllers/tourControllers');
 const router = express.Router();
 const authController = require('./../controllers/authControllers');
+const reviewRouter = require('../routes/reviewRoutes');
+
+// const reviewController = require('./../controllers/reviewControllers');
+// router
+//   .route('/:tourId/reviews')
+//   .post(
+//     authController.protect,
+//     authController.restrictTo('user'),
+//     reviewController.createReview
+//   );
 
 // router.param('id', checkID);
+
+router.use('/:tourId/reviews', reviewRouter);
+router.use('/:tourId', reviewRouter);
 
 router.route('/top-5-cheap').get(aliasTopTours, getAllTours);
 

@@ -9,6 +9,7 @@ const {
 } = require('../controllers/userControllers');
 
 const authController = require('./../controllers/authControllers');
+const reviewController = require('./../controllers/reviewControllers');
 
 const router = express.Router();
 

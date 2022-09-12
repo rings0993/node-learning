@@ -30,9 +30,7 @@ const mongooseConnection = mongoose
   });
 
 // Read JSON File後使用JSON.parse轉為JSON
-const tours = JSON.parse(
-  fs.readFileSync(`${__dirname}/tours-simple.json`, 'utf8')
-);
+const tours = JSON.parse(fs.readFileSync(`${__dirname}/tours.json`, 'utf8'));
 
 const importData = async () => {
   try {

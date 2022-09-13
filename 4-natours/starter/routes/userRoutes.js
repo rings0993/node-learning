@@ -1,13 +1,6 @@
 const express = require('express');
-const {
-  getAllUsers,
-  createUser,
-  getUser,
-  updateUser,
-  deleteUser,
-  updateMe,
-} = require('../controllers/userControllers');
 
+const userController = require('./../controllers/userControllers');
 const authController = require('./../controllers/authControllers');
 const reviewController = require('./../controllers/reviewControllers');
 
@@ -18,15 +11,24 @@ router.post('/login', authController.login);
 
 router.post('/forgotPassword', authController.forgotPassword);
 router.patch('/resetPassword/:token', authController.resetPassword);
-router.patch(
-  '/updateMyPassword',
-  authController.protect,
-  authController.updateMyPassword
-);
 
-router.patch('/updateMe', authController.protect, updateMe);
+// Following routes can only visit after login
+router.use(authController.protect);
 
-router.route('/').get(getAllUsers).post(createUser);
-router.route('/:id').get(getUser).patch(updateUser).delete(deleteUser);
+router.patch('/updateMyPassword', authController.updateMyPassword);
+
+router.get('/me', userController.getMe, userController.getUser);
+
+router.patch('/updateMe', userController.updateMe);
+
+// Following routes can only visit after loaded in as admin
+router.use(authController.restrictTo('admin'));
+
+router.route('/').get(userController.getAllUsers);
+router
+  .route('/:id')
+  .get(userController.getUser)
+  .patch(userController.updateUser)
+  .delete(userController.deleteUser);
 
 module.exports = router;

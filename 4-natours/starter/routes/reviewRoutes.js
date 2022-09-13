@@ -6,14 +6,24 @@ const router = express.Router({ mergeParams: true });
 
 router
   .route('/')
-  .get(reviewController.getReview)
   .post(
     authController.protect,
-    authController.restrictTo('public'),
+    authController.restrictTo('user'),
     reviewController.createReview
-  )
-  .patch(reviewController.updateReview);
+  );
 
-router.route('/:Id').delete(reviewController.deleteReview);
+router
+  .route('/:id')
+  .get(reviewController.getReview)
+  .delete(
+    authController.protect,
+    authController.restrictTo('user', 'admin'),
+    reviewController.deleteReview
+  )
+  .patch(
+    authController.protect,
+    authController.restrictTo('user', 'admin'),
+    reviewController.updateReview
+  );
 
 module.exports = router;

@@ -12,8 +12,8 @@ const handleDuplicateFieldsDB = (err) => {
   return new AppError(message, 400);
 };
 
-const handleValidationfailedDB = (err) => {
-  // 若有多個錯誤可以將erroes合併起來顯示
+const handleValidationFailedDB = (err) => {
+  // 若有多個錯誤可以將error合併起來顯示
   const errors = Object.values(err.errors).map((err) => err.message);
 
   const message = `Invalid input data: ${errors.join('. ')}`;
@@ -76,7 +76,7 @@ module.exports = (err, req, res, next) => {
     if (error.name === 'CastError') error = handleCastErrorDB(error);
     if (error.code === 11000) error = handleDuplicateFieldsDB(error);
     if (error.name === 'ValidationError')
-      error = handleValidationfailedDB(error);
+      error = handleValidationFailedDB(error);
     if (error.name === 'JsonWebTokenError')
       error = handleJsonWebTokenError(error);
     if (error.name === 'TokenExpiredError')

@@ -3,6 +3,7 @@ const User = require('./../models/userModel');
 const catchAsync = require('./../utils/catchAsync');
 const AppError = require('./../utils/appError');
 const factory = require('./handlerFactory');
+
 exports.getAllUsers = catchAsync(async (req, res, next) => {
   // const features = new APIFeatures(User.find(), req.query)
   const users = await User.find();
@@ -33,23 +34,15 @@ exports.updateMe = catchAsync(async (req, res, next) => {
   });
 });
 
-exports.createUser = (req, res) => {
-  res.status(500).json({
-    status: 'err',
-    message: 'This route is not yet defined',
-  });
-};
-exports.getUser = (req, res) => {
-  res.status(500).json({
-    status: 'err',
-    message: 'This route is not yet defined',
-  });
-};
-exports.updateUser = (req, res) => {
-  res.status(500).json({
-    status: 'err',
-    message: 'This route is not yet defined',
-  });
+exports.getMe = (req, res, next) => {
+  req.params.id = req.user.id;
+  next();
 };
 
+exports.getUser = factory.getOne(User);
+
+exports.updateUser = factory.updateOne(User);
 exports.deleteUser = factory.deleteOne(User);
+
+// Create User is in the authController
+// exports.createUser = factory.createOne(User);
